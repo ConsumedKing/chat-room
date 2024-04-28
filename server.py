@@ -19,13 +19,13 @@ def handle_connection(socket: sc.socket, address: str):
         if not message:
             break
         for clinet in clients:
-            if clinet != threading.current_thread():
-                clinet.socket.sendall(message.encode("utf-8"))
+            if clinet != socket:
+                clinet.sendall(message.encode("utf-8"))
     socket.close()
     clients.remove(threading.current_thread())
 
 while True:
     socket, address = server.accept()
+    clients.append(socket)
     thread = threading.Thread(target=handle_connection, args=(socket, address))
-    clients.append(thread)
     thread.start()
